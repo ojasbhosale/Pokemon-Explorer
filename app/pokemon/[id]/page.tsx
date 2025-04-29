@@ -14,11 +14,9 @@ interface PokemonPageProps {
 export default async function PokemonPage({ params }: PokemonPageProps) {
   try {
     const pokemonId = Number.parseInt(params.id)
-
     if (isNaN(pokemonId) || pokemonId <= 0 || pokemonId > 150) {
       return notFound()
     }
-
     return (
       <FavoritesProvider>
         <main className="container px-4 py-8 mx-auto max-w-5xl">
@@ -41,18 +39,15 @@ export async function generateStaticParams() {
   }))
 }
 
-export async function generateMetadata({ params }: PokemonPageProps) {
+export async function generateMetadata({ params }: { params: { id: string } }) {
   try {
     const pokemonId = Number.parseInt(params.id)
-
     if (isNaN(pokemonId) || pokemonId <= 0 || pokemonId > 150) {
       return {
         title: "Pokémon Not Found",
       }
     }
-
     const pokemon = await fetchPokemonById(pokemonId)
-
     return {
       title: `${pokemon.name.charAt(0).toUpperCase() + pokemon.name.slice(1)} | Pokémon Explorer`,
       description: `View detailed information about ${pokemon.name}, including stats, abilities, and more.`,
