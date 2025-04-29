@@ -13,11 +13,11 @@ type Params = {
 export default async function PokemonPage({ 
   params 
 }: { 
-  params: Promise<Params> | Params
+  params: Promise<Params>
 }) {
   try {
-    // Await params if it's a Promise
-    const resolvedParams = await Promise.resolve(params);
+    // Await params before using
+    const resolvedParams = await params;
     const pokemonId = Number.parseInt(resolvedParams.id)
     
     if (isNaN(pokemonId) || pokemonId <= 0 || pokemonId > 150) {
@@ -49,11 +49,11 @@ export async function generateStaticParams(): Promise<{ id: string }[]> {
 export async function generateMetadata({ 
   params 
 }: { 
-  params: Promise<Params> | Params
+  params: Promise<Params>
 }): Promise<Metadata> {
   try {
-    // Await params if it's a Promise
-    const resolvedParams = await Promise.resolve(params);
+    // Await params before using
+    const resolvedParams = await params;
     const pokemonId = Number.parseInt(resolvedParams.id)
     
     if (isNaN(pokemonId) || pokemonId <= 0 || pokemonId > 150) {
