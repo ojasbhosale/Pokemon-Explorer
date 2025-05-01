@@ -1,8 +1,12 @@
+// app/pokemon/[id]/page.tsx
+
 import { Suspense } from "react"
 import { notFound } from "next/navigation"
 import PokemonDetail from "@/components/pokemon-detail"
 import { Loader } from "@/components/loader"
 import { FavoritesProvider } from "@/components/favorites-provider"
+import { PokemonProvider } from "@/components/pokemon-context"
+import { Navigation } from "@/components/navigation"
 import { fetchPokemonById } from "@/lib/api"
 import type { Metadata } from 'next'
 
@@ -25,13 +29,16 @@ export default async function PokemonPage({
     }
     
     return (
-      <FavoritesProvider>
-        <main className="container px-4 py-8 mx-auto max-w-5xl">
-          <Suspense fallback={<Loader count={1} />}>
-            <PokemonDetail id={pokemonId} />
-          </Suspense>
-        </main>
-      </FavoritesProvider>
+      <PokemonProvider>
+        <FavoritesProvider>
+          <main className="container px-4 py-8 mx-auto max-w-5xl pb-24">
+            <Suspense fallback={<Loader count={1} />}>
+              <PokemonDetail id={pokemonId} />
+            </Suspense>
+            <Navigation />
+          </main>
+        </FavoritesProvider>
+      </PokemonProvider>
     )
   } catch (error) {
     console.log(error)

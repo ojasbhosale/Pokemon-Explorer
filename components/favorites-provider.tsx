@@ -5,6 +5,9 @@ import { createContext, useContext, useState, useEffect, type ReactNode } from "
 interface FavoritesContextType {
   favorites: number[]
   toggleFavorite: (id: number) => void
+  addFavorite: (id: number) => void
+  removeFavorite: (id: number) => void
+  clearFavorites: () => void
   isFavorite: (id: number) => boolean
 }
 
@@ -38,10 +41,33 @@ export function FavoritesProvider({ children }: { children: ReactNode }) {
     setFavorites((prev) => (prev.includes(id) ? prev.filter((favId) => favId !== id) : [...prev, id]))
   }
 
+  const addFavorite = (id: number) => {
+    setFavorites((prev) => (prev.includes(id) ? prev : [...prev, id]))
+  }
+
+  const removeFavorite = (id: number) => {
+    setFavorites((prev) => prev.filter((favId) => favId !== id))
+  }
+
+  const clearFavorites = () => {
+    setFavorites([])
+  }
+
   const isFavorite = (id: number) => favorites.includes(id)
 
   return (
-    <FavoritesContext.Provider value={{ favorites, toggleFavorite, isFavorite }}>{children}</FavoritesContext.Provider>
+    <FavoritesContext.Provider 
+      value={{ 
+        favorites, 
+        toggleFavorite, 
+        addFavorite, 
+        removeFavorite, 
+        clearFavorites, 
+        isFavorite 
+      }}
+    >
+      {children}
+    </FavoritesContext.Provider>
   )
 }
 

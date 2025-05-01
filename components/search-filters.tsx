@@ -2,7 +2,7 @@
 
 import type React from "react"
 import { useState } from "react"
-import { Search, Filter, X } from "lucide-react"
+import { Search, Filter, X, ArrowUpDown } from "lucide-react"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import {
@@ -10,14 +10,25 @@ import {
   DropdownMenuContent,
   DropdownMenuCheckboxItem,
   DropdownMenuTrigger,
+  DropdownMenuRadioGroup,
+  DropdownMenuRadioItem,
 } from "@/components/ui/dropdown-menu"
 import { Badge } from "@/components/ui/badge"
 import { usePokemonContext } from "./pokemon-context"
 import { pokemonTypes } from "@/lib/constants"
 
 export default function SearchFilters() {
-  const { searchTerm, setSearchTerm, selectedTypes, setSelectedTypes } = usePokemonContext()
-  const [isOpen, setIsOpen] = useState(false)
+  const { 
+    searchTerm, 
+    setSearchTerm, 
+    selectedTypes, 
+    setSelectedTypes,
+    sortOption,
+    setSortOption 
+  } = usePokemonContext()
+  
+  const [isTypeFilterOpen, setIsTypeFilterOpen] = useState(false)
+  const [isSortOpen, setIsSortOpen] = useState(false)
 
   const handleTypeToggle = (type: string) => {
     setSelectedTypes(selectedTypes.includes(type) 
@@ -29,9 +40,21 @@ export default function SearchFilters() {
   const clearFilters = () => {
     setSearchTerm("")
     setSelectedTypes([])
+    setSortOption('id-asc')
   }
 
-  const hasActiveFilters = searchTerm || selectedTypes.length > 0
+  const hasActiveFilters = searchTerm || selectedTypes.length > 0 || sortOption !== 'id-asc'
+
+  // Get sort option display text
+  const getSortLabel = () => {
+    switch (sortOption) {
+      case 'id-asc': return 'ID (Low to High)'
+      case 'id-desc': return 'ID (High to Low)'
+      case 'name-asc': return 'Name (A to Z)'
+      case 'name-desc': return 'Name (Z to A)'
+      default: return 'ID (Low to High)'
+    }
+  }
 
   return (
     <div className="sticky top-4 z-10 pt-8 pb-4 bg-background/80 backdrop-blur-sm">
@@ -58,15 +81,41 @@ export default function SearchFilters() {
           )}
         </div>
 
-        <div className="flex gap-2">
-          <DropdownMenu open={isOpen} onOpenChange={setIsOpen}>
+        <div className="flex flex-wrap gap-2">
+          {/* Sort Dropdown */}
+          <DropdownMenu open={isSortOpen} onOpenChange={setIsSortOpen}>
             <DropdownMenuTrigger asChild>
               <Button
                 variant="outline"
                 className="gap-2"
                 onClick={(e: React.MouseEvent) => {
                   e.preventDefault()
-                  setIsOpen(!isOpen) // Toggle dropdown on button click
+                  setIsSortOpen(!isSortOpen)
+                }}
+              >
+                <ArrowUpDown className="h-4 w-4" />
+                Sort: {getSortLabel()}
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent className="w-56" align="end">
+              <DropdownMenuRadioGroup value={sortOption} onValueChange={(value) => setSortOption(value as 'id-asc' | 'id-desc' | 'name-asc' | 'name-desc')}>
+                <DropdownMenuRadioItem value="id-asc">ID (Low to High)</DropdownMenuRadioItem>
+                <DropdownMenuRadioItem value="id-desc">ID (High to Low)</DropdownMenuRadioItem>
+                <DropdownMenuRadioItem value="name-asc">Name (A to Z)</DropdownMenuRadioItem>
+                <DropdownMenuRadioItem value="name-desc">Name (Z to A)</DropdownMenuRadioItem>
+              </DropdownMenuRadioGroup>
+            </DropdownMenuContent>
+          </DropdownMenu>
+
+          {/* Type Filter Dropdown */}
+          <DropdownMenu open={isTypeFilterOpen} onOpenChange={setIsTypeFilterOpen}>
+            <DropdownMenuTrigger asChild>
+              <Button
+                variant="outline"
+                className="gap-2"
+                onClick={(e: React.MouseEvent) => {
+                  e.preventDefault()
+                  setIsTypeFilterOpen(!isTypeFilterOpen)
                 }}
               >
                 <Filter className="h-4 w-4" />
@@ -87,6 +136,7 @@ export default function SearchFilters() {
             </DropdownMenuContent>
           </DropdownMenu>
 
+          {/* Clear Filters Button */}
           {hasActiveFilters && (
             <Button variant="ghost" onClick={clearFilters} className="gap-2">
               <X className="h-4 w-4" />

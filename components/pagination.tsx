@@ -2,15 +2,30 @@
 
 import { ChevronLeft, ChevronRight, MoreHorizontal } from "lucide-react"
 import { Button } from "@/components/ui/button"
+import { 
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
 import { cn } from "@/lib/utils"
 
 interface PaginationProps {
   currentPage: number
   totalPages: number
   onPageChange: (page: number) => void
+  itemsPerPage: number
+  onItemsPerPageChange: (count: number) => void
 }
 
-export function Pagination({ currentPage, totalPages, onPageChange }: PaginationProps) {
+export function Pagination({ 
+  currentPage, 
+  totalPages, 
+  onPageChange, 
+  itemsPerPage,
+  onItemsPerPageChange
+}: PaginationProps) {
   // Generate page numbers to display
   const getPageNumbers = () => {
     const pageNumbers = []
@@ -46,53 +61,72 @@ export function Pagination({ currentPage, totalPages, onPageChange }: Pagination
   const pageNumbers = getPageNumbers()
 
   return (
-    <nav className="flex justify-center items-center space-x-2" aria-label="Pagination">
-      <Button
-        variant="outline"
-        size="icon"
-        onClick={() => onPageChange(currentPage - 1)}
-        disabled={currentPage === 1}
-        aria-label="Previous page"
-      >
-        <ChevronLeft className="h-4 w-4" />
-      </Button>
-
+    <nav className="flex flex-wrap justify-between items-center gap-4 w-full" aria-label="Pagination">
       <div className="flex items-center space-x-2">
-        {pageNumbers.map((page, index) => {
-          if (page === "ellipsis1" || page === "ellipsis2") {
-            return (
-              <span key={`ellipsis-${index}`} className="flex items-center justify-center">
-                <MoreHorizontal className="h-4 w-4" />
-              </span>
-            )
-          }
+        <Button
+          variant="outline"
+          size="icon"
+          onClick={() => onPageChange(currentPage - 1)}
+          disabled={currentPage === 1}
+          aria-label="Previous page"
+        >
+          <ChevronLeft className="h-4 w-4" />
+        </Button>
 
-          const pageNum = page as number
-          return (
-            <Button
-              key={pageNum}
-              variant={currentPage === pageNum ? "default" : "outline"}
-              size="icon"
-              onClick={() => onPageChange(pageNum)}
-              aria-label={`Page ${pageNum}`}
-              aria-current={currentPage === pageNum ? "page" : undefined}
-              className={cn("h-9 w-9", currentPage === pageNum && "pointer-events-none")}
-            >
-              {pageNum}
-            </Button>
-          )
-        })}
+        <div className="flex items-center space-x-2">
+          {pageNumbers.map((page, index) => {
+            if (page === "ellipsis1" || page === "ellipsis2") {
+              return (
+                <span key={`ellipsis-${index}`} className="flex items-center justify-center">
+                  <MoreHorizontal className="h-4 w-4" />
+                </span>
+              )
+            }
+
+            const pageNum = page as number
+            return (
+              <Button
+                key={pageNum}
+                variant={currentPage === pageNum ? "default" : "outline"}
+                size="icon"
+                onClick={() => onPageChange(pageNum)}
+                aria-label={`Page ${pageNum}`}
+                aria-current={currentPage === pageNum ? "page" : undefined}
+                className={cn("h-9 w-9", currentPage === pageNum && "pointer-events-none")}
+              >
+                {pageNum}
+              </Button>
+            )
+          })}
+        </div>
+
+        <Button
+          variant="outline"
+          size="icon"
+          onClick={() => onPageChange(currentPage + 1)}
+          disabled={currentPage === totalPages}
+          aria-label="Next page"
+        >
+          <ChevronRight className="h-4 w-4" />
+        </Button>
       </div>
 
-      <Button
-        variant="outline"
-        size="icon"
-        onClick={() => onPageChange(currentPage + 1)}
-        disabled={currentPage === totalPages}
-        aria-label="Next page"
-      >
-        <ChevronRight className="h-4 w-4" />
-      </Button>
+      <div className="flex items-center space-x-2">
+        <span className="text-sm text-muted-foreground">Items per page:</span>
+        <Select
+          value={itemsPerPage.toString()}
+          onValueChange={(value) => onItemsPerPageChange(Number(value))}
+        >
+          <SelectTrigger className="w-16 h-9">
+            <SelectValue placeholder={itemsPerPage} />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="10">10</SelectItem>
+            <SelectItem value="20">20</SelectItem>
+            <SelectItem value="50">50</SelectItem>
+          </SelectContent>
+        </Select>
+      </div>
     </nav>
   )
 }

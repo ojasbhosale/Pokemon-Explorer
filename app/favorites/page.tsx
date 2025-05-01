@@ -1,14 +1,15 @@
-//app/page.tsx
+// app/favorites/page.tsx
+
 import { Suspense } from "react"
-import PokemonGrid from "@/components/pokemon-grid"
-import SearchFilters from "@/components/search-filters"
-import { PokemonProvider } from "@/components/pokemon-context"
 import { FavoritesProvider } from "@/components/favorites-provider"
+import { PokemonProvider } from "@/components/pokemon-context"
 import { ThemeToggle } from "@/components/theme-toggle"
 import { Loader } from "@/components/loader"
+import FavoritePokemonGrid from "../../components/favorite-pokemon-grid"
+import { FavoritesManagement } from "@/components/favorites-management"
 import { Navigation } from "@/components/navigation"
 
-export default function Home() {
+export default function FavoritesPage() {
   return (
     <PokemonProvider>
       <FavoritesProvider>
@@ -16,18 +17,18 @@ export default function Home() {
           <section className="container px-4 py-10 mx-auto max-w-7xl">
             <div className="flex flex-col sm:flex-row items-center justify-between gap-4 mb-8">
               <div className="space-y-2 text-center sm:text-left">
-                <h1 className="text-4xl font-extrabold tracking-tight lg:text-5xl">Pokémon Explorer</h1>
+                <h1 className="text-4xl font-extrabold tracking-tight lg:text-5xl">Favorite Pokémon</h1>
                 <p className="max-w-[700px] text-muted-foreground">
-                  Discover and explore the first 150 Pokémon with advanced filtering and search capabilities.
+                  View and manage your favorite Pokémon collection.
                 </p>
               </div>
               <ThemeToggle />
             </div>
 
-            <SearchFilters />
+            <FavoritesManagement />
 
             <Suspense fallback={<Loader count={12} />}>
-              <PokemonGrid />
+              <FavoritePokemonGrid />
             </Suspense>
           </section>
           <Navigation />

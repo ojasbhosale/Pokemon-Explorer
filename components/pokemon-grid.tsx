@@ -1,6 +1,5 @@
 "use client"
 
-import { useEffect } from "react"
 import { usePokemonContext } from "./pokemon-context"
 import PokemonCard from "./pokemon-card"
 import { Pagination } from "./pagination"
@@ -8,12 +7,15 @@ import { EmptyState } from "./empty-state"
 import { ErrorState } from "./error-state"
 
 export default function PokemonGrid() {
-  const { filteredPokemon, currentPage, setCurrentPage, itemsPerPage, isLoading, error } = usePokemonContext()
-
-  // Reset to first page when filters change
-  useEffect(() => {
-    setCurrentPage(1)
-  }, [filteredPokemon.length, setCurrentPage])
+  const { 
+    filteredPokemon, 
+    currentPage, 
+    setCurrentPage, 
+    itemsPerPage,
+    setItemsPerPage,
+    isLoading, 
+    error 
+  } = usePokemonContext()
 
   if (error) {
     return <ErrorState message={error} />
@@ -37,7 +39,15 @@ export default function PokemonGrid() {
         ))}
       </div>
 
-      {totalPages > 1 && <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={setCurrentPage} />}
+      {filteredPokemon.length > 0 && (
+        <Pagination 
+          currentPage={currentPage} 
+          totalPages={totalPages} 
+          onPageChange={setCurrentPage}
+          itemsPerPage={itemsPerPage}
+          onItemsPerPageChange={setItemsPerPage}
+        />
+      )}
     </div>
   )
 }
